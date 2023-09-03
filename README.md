@@ -41,8 +41,8 @@ foreach (var chunk in _chunkGenerator.GetChunk())
     await _vectorCollection.AddAsync(chunk);
 
     // We remove the text from the chunk to safe memory: 
-	   // we just need the vector, start index, length and source
-	   // so we can recover the the chunk from the original document later
+    // we just need the vector, start index, length and source
+    // so we can recover the the chunk from the original document later
     chunk.Text = null!;
 }
 ```
