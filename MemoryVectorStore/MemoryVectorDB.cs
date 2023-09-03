@@ -89,8 +89,7 @@ namespace MemoryVectorDB
                     // Remove the last item if the list is too long
                     if (nearestObjects.Count > noItems) nearestObjects.RemoveAt(nearestObjects.Count - 1);
                 }
-            }
-            
+            }            
             return nearestObjects;
         }
 

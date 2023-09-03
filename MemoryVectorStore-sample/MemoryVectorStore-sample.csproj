@@ -17,4 +17,10 @@
     <ProjectReference Include="..\MemoryVectorStore\MemoryVectorStore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="apikey.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

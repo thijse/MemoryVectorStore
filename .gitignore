@@ -19,6 +19,7 @@ out
 *.userosscache
 *.sln.docstates
 appsettings.json
+apikey.txt
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

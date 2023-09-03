@@ -13,7 +13,7 @@ namespace MemoryVectorDB_sample
     {
         static async Task Main(string[] args)
         {
-            string OpenAIkey           = "API key here"; // OpenAI key
+            string OpenAIkey           = File.Exists("apikey.txt") ?File.ReadAllText("apikey.txt") :""; // "API key here"; // OpenAI key
             string documentPath        = "D:\\Users\\Thijs\\OneDrive\\devel\\LLM\\MemoryVectorDB\\TestData\\Robinson-Crusoe-in-Levels-PDF.pdf"; // PDF document
             string documentVectorsPath = $"{documentPath}.json"                                                                               ; // Vectors created by embedding algorithm
             string documentTextPath    = $"{documentPath}.txt"                                                                                ; // text only document
