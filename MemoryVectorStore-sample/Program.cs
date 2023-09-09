@@ -4,10 +4,11 @@ using OpenAI.ObjectModels;
 using OpenAI.Managers;
 using OpenAI;
 using DataChunker;
+using System.Text;
 
 namespace MemoryVectorDB_sample
 {
-  
+
     // todo: add sample code interpreting the chunks
     internal class Program
     {
@@ -17,7 +18,8 @@ namespace MemoryVectorDB_sample
             string documentPath        = "D:\\Users\\Thijs\\OneDrive\\devel\\LLM\\MemoryVectorDB\\TestData\\Robinson-Crusoe-in-Levels-PDF.pdf"; // PDF document
             string documentVectorsPath = $"{documentPath}.json"                                                                               ; // Vectors created by embedding algorithm
             string documentTextPath    = $"{documentPath}.txt"                                                                                ; // text only document
-            string queryString         = $"Canibals and hiding bodies"                                                                        ; // string to look for
+            string queryString         = $"What has the book to say about Canibals and hiding bodies?"                                        ; // string to look for
+            //string queryString       = $"What has the book to cars and motor bikes?"; // string to look for
 
             Console.WriteLine("** Starting embedding demo");
 
@@ -39,9 +41,11 @@ namespace MemoryVectorDB_sample
                 await embeddingSample.SerializeVectorsAsync(documentVectorsPath);
             }
          
-            await embeddingSample.GetFindingsAsync(queryString);
+            var findings = await embeddingSample.GetFindingsAsync(queryString);
 
             // Todo: have OpenAI interpret the embeded chunks
+            Console.WriteLine("** Answer");
+            await embeddingSample.FormulateAnswerAsync(queryString,findings);
 
             Console.WriteLine("** Done");
         }
@@ -88,9 +92,6 @@ namespace MemoryVectorDB_sample
 
                     // We clean out the text, to safe memory: we just need the vector, start index and length
                     chunk.Text = null!;
-
-                    // break after 5 chunks
-                    //if (i == 5) break;
                 }
             }
             public async Task SerializeVectorsAsync(string fileName)
@@ -136,7 +137,40 @@ namespace MemoryVectorDB_sample
                 else { return null!; }                    
             }
 
-            public async Task GetFindingsAsync(string query)
+            public async Task FormulateAnswerAsync(string query, SortedList<float, Chunk> bestMatches)
+            {
+                StringBuilder queryBuilder = new StringBuilder();  
+                
+                // Basic format of the query:
+                queryBuilder.AppendLine($"Answer the following query {query}. Only use the content below to construct the answer. If no content is shown below or if it is not applicable, answer: \"Sorry, I have no data on that\" \n\n");
+                
+                // Insert the best matches
+                foreach (var match in bestMatches)
+                {
+                    var chunk = match.Value;
+                    queryBuilder.AppendLine(_document?.Text.Substring(chunk.StartCharNo, chunk.CharLength)+"\n" ?? "");
+                }
+
+                // Ask Completion to answer the query
+                var completionResult = await _openAiService.ChatCompletion.CreateCompletion(new ChatCompletionCreateRequest
+                {
+                    Messages = new List<ChatMessage>
+                    {
+                        ChatMessage.FromSystem("Your are an AI assistant. The assistant is helpful, factual and friendly."), 
+                        ChatMessage.FromUser(queryBuilder.ToString()),
+                    },
+                    Model = Models.Gpt_3_5_Turbo,
+                });
+
+                // Show the answer
+                if (completionResult.Successful)
+                {
+                    Console.WriteLine(completionResult.Choices.First().Message.Content);
+                }
+            }
+
+
+            public async Task<SortedList<float, Chunk>> GetFindingsAsync(string query)
             {
                 var querychunk  = await ChunkEmbedingAsync(new Chunk() { Text = query });  
                 var queryVector = querychunk?.GetVector()??new float[0];
@@ -145,11 +179,13 @@ namespace MemoryVectorDB_sample
                 foreach (var item in bestMatches)
                 {
                     ShowMatch(item.Value, queryVector);                    
-                }                
+                }
+                return bestMatches;
             }
 
             private void ShowMatch(Chunk chunk, float[] queryVector)
             {
+                // Show the match if the text with the query and the text itself
                 var dotProduct = DotProduct(chunk.GetVector(), queryVector);
                 Console.WriteLine($"Match: {dotProduct} - {chunk.StartCharNo} - {chunk.CharLength}");                
                 Console.WriteLine(_document?.Text.Substring(chunk.StartCharNo, chunk.CharLength)??"");
