@@ -68,7 +68,11 @@ Finally we want a conversational network to interpret the chunks and answer the 
 
 ```cs
 // Format the query to post to the LLM:
-queryBuilder.AppendLine($"Answer the following query {query}. Only use the content below to construct the answer. If no content is shown below or if it is not applicable, answer: \"Sorry, I have no data on that\" \n\n");
+queryBuilder.AppendLine(
+$"Answer the following query {query}. Only use the content below to construct the answer, 
+use the page numbers as reference. If no content is shown below or if it is not applicable,
+answer: \"Sorry, I have no data on that\" \n\n");
+");
 
 // Insert the best matches
 foreach (var match in bestMatches)
@@ -89,3 +93,11 @@ var completionResult = await _openAiService.ChatCompletion.CreateCompletion(new 
 });
 ```
 
+The query on the embedded book Robinson-Crusoe-in-Levels-PDF "What has the book to say about Canibals and hiding bodies?" thus results in an answer similar to
+
+"According to the book, "Robinson Crusoe," there are several references to cannibals and hiding bodies. On page 39, the protagonist and his companion, named Friday, come across the bodies of dead cannibals. Initially, Friday wants to eat the bodies, but the protagonist shows him that it is not appropriate. They proceed to bury the cannibals and collect their body parts, preparing a large fire to burn them.
+Later on page 39, after hiding the bodies in the forest, the protagonist takes Friday to his secret cave for safety. The protagonist describes Friday as a young, strong man with dark skin and long black hair.
+Another mention of cannibals is on page 43, when the protagonist and Friday observe cannibals eating a prisoner and plan to rescue the remaining prisoner, who is European. They shoot at the cannibals and manage to save the prisoner.
+In relation to hiding bodies, on page 39, the protagonist and Friday hide the bodies of the cannibals in the forest near the beach before moving deeper into the forest. It was crucial for them to hide the bodies to avoid attracting attention.
+Additionally, on page 47, the protagonist and Friday bury the bodies of the killed cannibals, which is described as a lot of work.
+These references to cannibals and hiding bodies demonstrate the protagonist's encounters with dangerous situations and his efforts to protect himself and others."
