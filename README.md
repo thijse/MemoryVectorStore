@@ -12,7 +12,7 @@ The repository contains three main projects:
  This code is based on the blog post titled ["Vector Search with C#: A Practical Approach for Small Datasets."](https://crispycode.net/vector-search-with-c-a-practical-approach-for-small-datasets/) 
 
 
-## Code samples
+## Code example
 
 First we need to make chunks of the original PDF and build the embedding vectors
 
@@ -56,10 +56,36 @@ var queryVector = querychunk?.GetVector()??new float[0];
 // Next find the closest vectors to the query vector
 var bestMatches = _vectorCollection.FindNearestSorted(queryVector, 10);
 
-// And where done!
+// And here they are
 foreach (var item in bestMatches)
 {
     ShowMatch(item.Value, queryVector);                    
 } 
 ```
 Note that the FindNearestSorted is just a brute-force comparison of the dot products between the query vector and all chunk vectors. For larger vector stores, indexes should be created
+
+Finally we want a conversational network to interpret the chunks and answer the question
+
+```cs
+// Format the query to post to the LLM:
+queryBuilder.AppendLine($"Answer the following query {query}. Only use the content below to construct the answer. If no content is shown below or if it is not applicable, answer: \"Sorry, I have no data on that\" \n\n");
+
+// Insert the best matches
+foreach (var match in bestMatches)
+{
+    var chunk = match.Value;
+    queryBuilder.AppendLine(_document?.Text.Substring(chunk.StartCharNo, chunk.CharLength)+"\n" ?? "");
+}
+
+// Ask Completion to answer the query
+var completionResult = await _openAiService.ChatCompletion.CreateCompletion(new ChatCompletionCreateRequest
+{
+    Messages = new List<ChatMessage>
+    {
+        ChatMessage.FromSystem("Your are an AI assistant. The assistant is helpful, factual and friendly."), 
+        ChatMessage.FromUser(queryBuilder.ToString()),
+    },
+    Model = Models.Gpt_3_5_Turbo,
+});
+```
+
