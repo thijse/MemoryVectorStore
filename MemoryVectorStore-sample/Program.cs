@@ -14,11 +14,11 @@ namespace MemoryVectorDB_sample
     {
         static async Task Main(string[] args)
         {
-            string OpenAIkey           = File.Exists("apikey.txt") ?File.ReadAllText("apikey.txt") :""; // "API key here"; // OpenAI key
-            string documentPath        = "D:\\Users\\Thijs\\OneDrive\\devel\\LLM\\MemoryVectorDB\\TestData\\Robinson-Crusoe-in-Levels-PDF.pdf"; // PDF document
-            string documentVectorsPath = $"{documentPath}.json"                                                                               ; // Vectors created by embedding algorithm
-            string documentTextPath    = $"{documentPath}.txt"                                                                                ; // text only document
-            string queryString         = $"What has the book to say about Canibals and hiding bodies?"                                        ; // string to look for
+            string OpenAIkey           = File.Exists("apikey.txt") ?File.ReadAllText("apikey.txt") :"";    // "API key here"; // OpenAI key
+            string documentPath        = "Robinson-Crusoe-in-Levels-PDF.pdf";                              // PDF document
+            string documentVectorsPath = $"{documentPath}.json"                                          ; // Vectors created by embedding algorithm
+            string documentTextPath    = $"{documentPath}.txt"                                           ; // text only document
+            string queryString         = $"What has the book to say about Canibals and hiding bodies?"   ; // string to look for
             //string queryString       = $"What has the book to cars and motor bikes?"; // string to look for
 
             Console.WriteLine("** Starting embedding demo");
@@ -28,7 +28,7 @@ namespace MemoryVectorDB_sample
 
             if (File.Exists(documentVectorsPath) && File.Exists(documentTextPath))
             {
-                Console.WriteLine("** Vectors already exist, reading previous embedding"); 
+                Console.WriteLine("** Vectors already exist, reading previous embedding");
                 // Read embedding
                 embeddingSample.DeserializeDocumentText(documentTextPath);
                 await embeddingSample.DeserializeVectorsAsync(documentVectorsPath);
@@ -142,12 +142,13 @@ namespace MemoryVectorDB_sample
                 StringBuilder queryBuilder = new StringBuilder();  
                 
                 // Basic format of the query:
-                queryBuilder.AppendLine($"Answer the following query {query}. Only use the content below to construct the answer. If no content is shown below or if it is not applicable, answer: \"Sorry, I have no data on that\" \n\n");
+                queryBuilder.AppendLine($"Answer the following query {query}. Only use the content below to construct the answer, use the page numbers as reference. If no content is shown below or if it is not applicable, answer: \"Sorry, I have no data on that\" \n\n");
                 
                 // Insert the best matches
                 foreach (var match in bestMatches)
                 {
                     var chunk = match.Value;
+                    queryBuilder.AppendLine($"page {chunk.SourceIndex}:");
                     queryBuilder.AppendLine(_document?.Text.Substring(chunk.StartCharNo, chunk.CharLength)+"\n" ?? "");
                 }
 

@@ -8,14 +8,17 @@ namespace DataChunker
     /// </summary>
     public class DocumentIndex
     {
-        public DocumentIndex(string documentIndex, int characterNo)
+        public DocumentIndex(string documentIndex, int characterNo, int characterLength)
         {
-            Index       = documentIndex;
-            CharacterNo = characterNo;
+            Index           = documentIndex;
+            CharacterNo     = characterNo;
+            CharacterLength = characterLength;
         }
 
-        public string Index    { get; }
-        public int CharacterNo { get; }
+        public string Index        { get; }
+        public int CharacterNo     { get; }
+        public int CharacterLength { get; }
+        //
     }
 
     /// <summary>
@@ -31,7 +34,7 @@ namespace DataChunker
 
         public void Add(string text, string index)
         {
-            Indices.Add(new DocumentIndex(index, _text.Length-1));
+            Indices.Add(new DocumentIndex(index, _text.Length-1, text.Length));
             _text.Append(text);
         }
 
@@ -44,7 +47,7 @@ namespace DataChunker
 
         public string GetIndex(int characterNo)
         {
-            var documentIndex = Indices.FirstOrDefault(i => i.CharacterNo <= characterNo && characterNo < i.CharacterNo + i.Index.Length);
+            var documentIndex = Indices.FirstOrDefault(i => i.CharacterNo <= characterNo && characterNo < i.CharacterNo + i.CharacterLength);
             if (documentIndex == null) return string.Empty;
             return documentIndex.Index;
         }

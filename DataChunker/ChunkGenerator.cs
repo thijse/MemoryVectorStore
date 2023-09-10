@@ -8,15 +8,17 @@ namespace DataChunker
             get { return base._textVector; }
             set { _textVector = value;     }
         } 
-        public int StartCharNo   { get; set; } = 0;
-        public int CharLength    { get; set; } = 0;
-        public string Text       { get; set; } = "";
-        public string Source     { get; set; } = "";
-        public Chunk(string startIndex, int startCharNo, int charLength, string text)
+        public int StartCharNo    { get; set; } = 0;
+        public int CharLength     { get; set; } = 0;
+        public string Text        { get; set; } = "";
+        public string Source      { get; set; } = "";
+        public string SourceIndex { get; set; } = "";
+        public Chunk(string sourceIndex, int startCharNo, int charLength, string text)
         {
             StartCharNo = startCharNo;
             CharLength  = charLength;
             Text        = text;
+            SourceIndex = sourceIndex;
         }
 
         public Chunk(){}
