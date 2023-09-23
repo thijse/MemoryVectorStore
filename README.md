@@ -62,7 +62,7 @@ foreach (var item in bestMatches)
     ShowMatch(item.Value, queryVector);                    
 } 
 ```
-Note that the FindNearestSorted is just a brute-force comparison of the dot products between the query vector and all chunk vectors. For larger vector stores, indexes should be created
+Note that the FindNearestSorted is just a brute-force comparison of the (normalized) dot products between the query vector and all chunk vectors. For larger vector stores,  a database should be used that implements an indexing system for efficient nearest neighbour searches  [using something like this library](https://github.com/curiosity-ai/hnsw-sharp)
 
 Finally we want a conversational network to interpret the chunks and answer the question
 
@@ -74,14 +74,14 @@ use the page numbers as reference. If no content is shown below or if it is not 
 answer: \"Sorry, I have no data on that\" \n\n");
 ");
 
-// Insert the best matches
+// Insert the best matches into the same query
 foreach (var match in bestMatches)
 {
     var chunk = match.Value;
     queryBuilder.AppendLine(_document?.Text.Substring(chunk.StartCharNo, chunk.CharLength)+"\n" ?? "");
 }
 
-// Ask Completion to answer the query
+// Ask OpenAIs ChatCompletion API to answer the query
 var completionResult = await _openAiService.ChatCompletion.CreateCompletion(new ChatCompletionCreateRequest
 {
     Messages = new List<ChatMessage>
@@ -97,7 +97,7 @@ The query on the embedded book Robinson-Crusoe-in-Levels-PDF
 
 >What has the book to say about Canibals and hiding bodies?
 
-thus results in an answer similar to
+thus results in an answer similar to (the response is not fully deterministic)
 
 >According to the book, "Robinson Crusoe," there are several references to cannibals and hiding bodies. On page 39, the protagonist and his companion, named Friday, come across the bodies of dead cannibals.
 >Initially, Friday wants to eat the bodies, but the protagonist shows him that it is not appropriate. They proceed to bury the cannibals and collect their body parts, preparing a large fire to burn them.
