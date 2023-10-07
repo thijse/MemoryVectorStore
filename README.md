@@ -3,7 +3,6 @@
 # Memory Vector Store
 Sample of implementing a simple in-memory vector store
 
-This repository:
 The repository contains three main projects: 
 - Memory Vector Store project, which focuses on storing vectors in memory;
 - Chunk Creator project, which extracts vectors from PDF files;
