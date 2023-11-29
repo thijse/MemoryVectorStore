@@ -8,9 +8,6 @@ The repository contains three main projects:
 - Chunk Creator project, which extracts vectors from PDF files;
 - Sample Search project, which demonstrates how to perform similarity searches using the stored vectors. Each project has its own set of code and resources, allowing you to explore and understand the implementation details.
 
- This code is based on the blog post titled ["Vector Search with C#: A Practical Approach for Small Datasets."](https://crispycode.net/vector-search-with-c-a-practical-approach-for-small-datasets/) 
-
-
 ## Code example
 
 First we need to make chunks of the original PDF and build the embedding vectors
@@ -106,3 +103,7 @@ thus results in an answer similar to (the response is not fully deterministic)
 >Another mention of cannibals is on page 43, when the protagonist and Friday observe cannibals eating a prisoner and plan to rescue the remaining prisoner, who is European. They shoot at the cannibals and manage to save the prisoner.
 >
 >In relation to hiding bodies, on page 39, the protagonist and Friday hide the bodies of the cannibals in the forest near the beach before moving deeper into the forest. It was crucial for them to hide the bodies to avoid attracting attention..`
+
+## Acknowledgements
+
+ This code is strongly inspired by the blog post titled ["Vector Search with C#: A Practical Approach for Small Datasets."](https://crispycode.net/vector-search-with-c-a-practical-approach-for-small-datasets/) 
