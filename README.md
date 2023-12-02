@@ -46,10 +46,10 @@ foreach (var chunk in _chunkGenerator.GetChunk())
 Now we can find the best matching chunks related to our query
 
 ```cs
-// First we make a vector of the query like we have done for the chunks
-var queryVector = querychunk?.GetVector()??new float[0];
+// First we make a vector of the query like we have done for the chunks of the documents
+var queryVector = query.GetVector();
 
-// Next find the closest vectors to the query vector
+// Next find the 10 closest vectors to the query vector
 var bestMatches = _vectorCollection.FindNearestSorted(queryVector, 10);
 
 // And here they are
