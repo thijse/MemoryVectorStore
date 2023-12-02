@@ -89,7 +89,7 @@ var completionResult = await _openAiService.ChatCompletion.CreateCompletion(new 
 });
 ```
 
-The query on the embedded book Robinson-Crusoe-in-Levels-PDF 
+A query on the (free) book "Robinson-Crusoe-in-Levels.PDF" 
 
 >What has the book to say about Canibals and hiding bodies?
 
